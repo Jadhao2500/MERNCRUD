@@ -13,7 +13,7 @@ const Tab = styled(NavLink)`
 `;
 const NavBar = () => {
   return (
-    <Header position="static">
+    <Header position="sticky">
       <Toolbar>
         <Tab to="/">Saurabh</Tab>
         <Tab to="/allUsers">All Users</Tab>

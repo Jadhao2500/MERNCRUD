@@ -7,9 +7,9 @@ import {
   styled,
   Button,
 } from "@mui/material";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { addUser } from "../service/api";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { editUser, getUser } from "../service/api";
 
 const Container = styled(FormGroup)`
   margin: 10px auto 0 auto;
@@ -26,23 +26,36 @@ const defaultUser = {
   email: "",
   phone: "",
 };
-
-const AddUser = () => {
+const EditUser = () => {
   const [user, setUser] = useState(defaultUser);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    loadUserDetails();
+  }, []);
+
+  const loadUserDetails = async () => {
+    try {
+      let res = await getUser(id);
+      setUser(res.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const onValueChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
     // console.log(user);
   };
 
-  const addUserDetails = async () => {
-    await addUser(user);
+  const editUserDetails = async () => {
+    await editUser(user, id);
     navigate("/allUsers");
   };
-
+  //   console.log(user);
   return (
     <Container>
-      <Typography variant="h4">Add Users</Typography>
+      <Typography variant="h4">Edit User</Typography>
       <FormControl>
         <InputLabel>Name</InputLabel>
         <Input
@@ -50,6 +63,7 @@ const AddUser = () => {
             onValueChange(e);
           }}
           name="name"
+          value={user.name}
         />
       </FormControl>
       <FormControl>
@@ -59,6 +73,7 @@ const AddUser = () => {
             onValueChange(e);
           }}
           name="username"
+          value={user.username}
         />
       </FormControl>
       <FormControl>
@@ -68,6 +83,7 @@ const AddUser = () => {
             onValueChange(e);
           }}
           name="email"
+          value={user.email}
         />
       </FormControl>
       <FormControl>
@@ -77,13 +93,14 @@ const AddUser = () => {
             onValueChange(e);
           }}
           name="phone"
+          value={user.phone}
         />
       </FormControl>
       <FormControl>
         <Button
           variant="contained"
           onClick={() => {
-            addUserDetails();
+            editUserDetails();
           }}
         >
           Submit
@@ -93,4 +110,4 @@ const AddUser = () => {
   );
 };
 
-export default AddUser;
+export default EditUser;
